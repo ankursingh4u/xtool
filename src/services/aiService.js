@@ -5,7 +5,13 @@ const ActionLog = require('../models/ActionLog');
 const logger = require('../utils/logger');
 const { MAX_TWEET_LENGTH, TOPICS } = require('../config/constants');
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+let openai;
+function getOpenAI() {
+  if (!openai) {
+    openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  }
+  return openai;
+}
 
 /**
  * Build a prompt using trending tweets as context.
@@ -71,7 +77,7 @@ async function generateTweets(topic, style) {
 
   const prompt = buildPrompt(trends, topic, style);
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAI().chat.completions.create({
     model: 'gpt-4o-mini',
     messages: [{ role: 'user', content: prompt }],
     temperature: 0.9,
@@ -155,7 +161,7 @@ Write a thread of ${tweetCount} tweets about "${topic}".
 
 Return ONLY a JSON array of ${tweetCount} strings. No explanation.`;
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAI().chat.completions.create({
     model: 'gpt-4o-mini',
     messages: [{ role: 'user', content: prompt }],
     temperature: 0.85,
@@ -223,7 +229,7 @@ ${trendContext || 'No trends available - generate original content.'}
 Return ONLY a JSON array of objects with "topic" and "text" fields. No explanation, no markdown.
 Example: [{"topic": "tech", "text": "tweet text here"}, ...]`;
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAI().chat.completions.create({
     model: 'gpt-4o-mini',
     messages: [{ role: 'user', content: prompt }],
     temperature: 0.9,
