@@ -1,0 +1,73 @@
+<%- include('../partials/head') %>
+<div class="app">
+  <%- include('../partials/sidebar') %>
+  <div class="main">
+    <div class="page-header">
+      <h1>Tweet Queue</h1>
+      <a href="/generate" class="btn btn-primary">+ Generate New</a>
+    </div>
+
+    <div class="filters">
+      <select id="filterStatus" onchange="applyFilters()">
+        <option value="">All Statuses</option>
+        <% statuses.forEach(s => { %>
+          <option value="<%= s %>" <%= currentStatus === s ? 'selected' : '' %>><%= s %></option>
+        <% }) %>
+      </select>
+      <select id="filterTopic" onchange="applyFilters()">
+        <option value="">All Topics</option>
+        <% topics.forEach(t => { %>
+          <option value="<%= t %>" <%= currentTopic === t ? 'selected' : '' %>><%= t %></option>
+        <% }) %>
+      </select>
+    </div>
+
+    <% if (tweets.length === 0) { %>
+      <div class="empty-state">
+        No tweets found. <a href="/generate">Generate some!</a>
+      </div>
+    <% } %>
+
+    <% tweets.forEach(tweet => { %>
+      <div class="tweet-card" id="tweet-<%= tweet._id %>">
+        <div class="tweet-meta">
+          <span>
+            <span class="badge badge-<%= tweet.status %>"><%= tweet.status %></span>
+            <% if (tweet.topic) { %> · <%= tweet.topic %><% } %>
+            <% if (tweet.scheduledAt) { %> · Scheduled: <%= new Date(tweet.scheduledAt).toLocaleString() %><% } %>
+          </span>
+          <span><%= new Date(tweet.createdAt).toLocaleDateString() %></span>
+        </div>
+
+        <% if (tweet.thread && tweet.thread.length > 0) { %>
+          <div class="thread-indicator">Thread (<%= tweet.thread.length + 1 %> tweets)</div>
+        <% } %>
+
+        <div class="tweet-text" id="text-<%= tweet._id %>"><%= tweet.text %></div>
+        <textarea class="tweet-edit" id="edit-<%= tweet._id %>" style="display:none" maxlength="280"><%= tweet.text %></textarea>
+
+        <div class="tweet-actions">
+          <% if (tweet.status === 'draft') { %>
+            <button class="btn btn-sm" onclick="toggleEdit('<%= tweet._id %>')">Edit</button>
+            <button class="btn btn-sm btn-primary" onclick="updateTweet('<%= tweet._id %>', {status:'approved'})">Approve</button>
+            <button class="btn btn-sm btn-danger" onclick="updateTweet('<%= tweet._id %>', {status:'rejected'})">Reject</button>
+            <input type="datetime-local" class="schedule-input" id="schedule-<%= tweet._id %>"
+              onchange="updateTweet('<%= tweet._id %>', {status:'approved', scheduledAt: this.value})">
+          <% } else if (tweet.status === 'approved') { %>
+            <button class="btn btn-sm btn-success" onclick="postNow('<%= tweet._id %>')">Post Now</button>
+            <button class="btn btn-sm" onclick="updateTweet('<%= tweet._id %>', {status:'draft'})">Back to Draft</button>
+            <input type="datetime-local" class="schedule-input" id="schedule-<%= tweet._id %>"
+              value="<%= tweet.scheduledAt ? new Date(tweet.scheduledAt).toISOString().slice(0,16) : '' %>"
+              onchange="updateTweet('<%= tweet._id %>', {scheduledAt: this.value})">
+          <% } else if (tweet.status === 'failed') { %>
+            <button class="btn btn-sm" onclick="updateTweet('<%= tweet._id %>', {status:'approved'})">Retry</button>
+            <span style="font-size:12px;color:var(--danger)"><%= tweet.postError || '' %></span>
+          <% } %>
+          <button class="btn btn-sm btn-danger" onclick="deleteTweet('<%= tweet._id %>')">Delete</button>
+          <span class="char-count" id="count-<%= tweet._id %>"><%= tweet.text.length %>/280</span>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+</div>
+<%- include('../partials/footer') %>

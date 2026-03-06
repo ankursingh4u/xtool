@@ -1,0 +1,17 @@
+<%- include('../partials/head') %>
+<div class="login-container">
+  <div class="login-box">
+    <h1>XTool</h1>
+    <% if (error) { %>
+      <div class="error"><%= error %></div>
+    <% } %>
+    <form method="POST" action="/login">
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" name="password" autofocus required>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%">Login</button>
+    </form>
+  </div>
+</div>
+<%- include('../partials/footer') %>

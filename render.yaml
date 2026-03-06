@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: xtool
+    runtime: docker
+    plan: free
+    envVars:
+      - key: PORT
+        value: 3000
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        fromDatabase:
+          name: xtool-db
+          property: connectionString
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: X_USERNAME
+        sync: false
+      - key: X_PASSWORD
+        sync: false
+      - key: X_EMAIL
+        sync: false
+      - key: DASHBOARD_PASSWORD
+        sync: false
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: MAX_TWEETS_PER_DAY
+        value: 7
+
+databases:
+  - name: xtool-db
+    plan: free

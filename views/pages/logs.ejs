@@ -1,0 +1,35 @@
+<%- include('../partials/head') %>
+<div class="app">
+  <%- include('../partials/sidebar') %>
+  <div class="main">
+    <div class="page-header">
+      <h1>Action Logs</h1>
+    </div>
+
+    <% if (logs.length === 0) { %>
+      <div class="empty-state">No logs yet</div>
+    <% } else { %>
+      <table class="log-table">
+        <thead>
+          <tr>
+            <th>Action</th>
+            <th>Tweet ID</th>
+            <th>Details</th>
+            <th>Timestamp</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% logs.forEach(log => { %>
+            <tr>
+              <td><span class="badge badge-<%= log.action.includes('posted') || log.action.includes('success') ? 'posted' : log.action.includes('fail') ? 'failed' : log.action.includes('approved') ? 'approved' : 'draft' %>"><%= log.action %></span></td>
+              <td style="font-size:11px;font-family:monospace"><%= log.tweetId ? log.tweetId.toString().slice(-8) : '—' %></td>
+              <td><%= log.details || '—' %></td>
+              <td><%= new Date(log.timestamp).toLocaleString() %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+  </div>
+</div>
+<%- include('../partials/footer') %>

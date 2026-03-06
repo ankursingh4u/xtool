@@ -1,0 +1,38 @@
+<%- include('../partials/head') %>
+<div class="app">
+  <%- include('../partials/sidebar') %>
+  <div class="main">
+    <div class="page-header">
+      <h1>Trend Discovery</h1>
+      <div style="display:flex; gap:8px">
+        <input type="text" id="trendKeyword" placeholder="Keyword..." style="padding:6px 10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:13px;width:160px">
+        <button class="btn btn-primary" id="fetchBtn" onclick="fetchTrends()">Fetch Trends</button>
+        <button class="btn" onclick="fetchAllTrends()">Fetch All Topics</button>
+      </div>
+    </div>
+
+    <% if (trends.length === 0) { %>
+      <div class="empty-state">
+        No trends fetched yet. Click "Fetch Trends" to start discovering content.
+      </div>
+    <% } %>
+
+    <% trends.forEach(trend => { %>
+      <div class="trend-card">
+        <div class="trend-author">
+          <%= trend.authorName || 'Unknown' %>
+          <span class="trend-handle">@<%= trend.authorHandle || '?' %></span>
+        </div>
+        <div class="trend-text"><%= trend.text %></div>
+        <div class="trend-stats">
+          <span><%= trend.engagement.likes %> likes</span>
+          <span><%= trend.engagement.retweets %> retweets</span>
+          <span><%= trend.engagement.replies %> replies</span>
+          <% if (trend.keyword) { %><span>Keyword: <%= trend.keyword %></span><% } %>
+          <% if (trend.url) { %><a href="<%= trend.url %>" target="_blank">View</a><% } %>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+</div>
+<%- include('../partials/footer') %>

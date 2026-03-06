@@ -1,0 +1,29 @@
+{
+  "name": "xtool",
+  "version": "1.0.0",
+  "description": "Lightweight X (Twitter) content automation tool for personal use",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "seed": "node src/utils/seed.js"
+  },
+  "keywords": ["twitter", "automation", "content", "ai"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "connect-mongo": "^5.1.0",
+    "cron": "^3.1.7",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.21.0",
+    "express-session": "^1.18.0",
+    "mongoose": "^8.6.0",
+    "openai": "^4.56.0",
+    "playwright": "^1.47.0",
+    "winston": "^3.14.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}

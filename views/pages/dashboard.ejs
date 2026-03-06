@@ -1,0 +1,67 @@
+<%- include('../partials/head') %>
+<div class="app">
+  <%- include('../partials/sidebar') %>
+  <div class="main">
+    <div class="page-header">
+      <h1>Dashboard</h1>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="label">Drafts</div>
+        <div class="value"><%= stats.drafts %></div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Approved</div>
+        <div class="value" style="color:var(--primary)"><%= stats.approved %></div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Posted</div>
+        <div class="value" style="color:var(--success)"><%= stats.posted %></div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Failed</div>
+        <div class="value" style="color:var(--danger)"><%= stats.failed %></div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Today</div>
+        <div class="value"><%= stats.todayCount %>/<%= maxPerDay %></div>
+      </div>
+    </div>
+
+    <div class="scheduler-status">
+      <span class="dot <%= schedulerRunning ? 'active' : 'inactive' %>"></span>
+      <span>Scheduler: <strong><%= schedulerRunning ? 'Running' : 'Stopped' %></strong></span>
+      <% if (schedulerRunning) { %>
+        <button class="btn btn-sm btn-danger" onclick="toggleScheduler('stop')">Stop</button>
+      <% } else { %>
+        <button class="btn btn-sm btn-primary" onclick="toggleScheduler('start')">Start</button>
+      <% } %>
+    </div>
+
+    <h2 style="font-size:16px; margin-bottom:12px">Recent Activity</h2>
+    <% if (recentLogs.length === 0) { %>
+      <div class="empty-state">No activity yet</div>
+    <% } else { %>
+      <table class="log-table">
+        <thead>
+          <tr>
+            <th>Action</th>
+            <th>Details</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% recentLogs.forEach(log => { %>
+            <tr>
+              <td><span class="badge badge-<%= log.action.includes('posted') ? 'posted' : log.action.includes('fail') ? 'failed' : 'draft' %>"><%= log.action %></span></td>
+              <td><%= log.details || '—' %></td>
+              <td><%= new Date(log.timestamp).toLocaleString() %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+  </div>
+</div>
+<%- include('../partials/footer') %>
